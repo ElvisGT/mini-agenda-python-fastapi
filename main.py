@@ -23,7 +23,7 @@ def create_contacto(contacto:Contacto):
     for c in contactos:
         if c.nombre.lower() == contacto.nombre.lower():
             return {"Mensaje":"El usuario ya existe"}
-    contactos.append(contacto.dict())
+    contactos.append(contacto)
     return {"mensaje":"Contacto agregado","contacto":contacto}
 
 @app.get("/contactos/{nombre}")
@@ -36,8 +36,16 @@ def get_contact(nombre:str):
 @app.put("/contactos/{nombre}")
 def update_contact(nombre:str,contacto:Contacto):
     for i,c in enumerate(contactos):
-        if c['nombre'].lower() == nombre.lower():
+        if c.nombre.lower() == nombre.lower():
             c[i] = contacto
             return {"Mensaje":"Usuario creado correctamente","Contacto":contacto}
     
+    raise HTTPException(status_code=404,detail="Usuario no encontrado")
+
+@app.delete("/contactos/{nombre}")
+def delete_contact(nombre:str):
+    for i,c in enumerate(contactos):
+        if c.nombre.lower() == nombre.lower():
+            contactos.pop(i)
+            return {"Mensaje":"Eliminado exitosamente"}
     raise HTTPException(status_code=404,detail="Usuario no encontrado")
